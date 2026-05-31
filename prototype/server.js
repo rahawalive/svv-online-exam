@@ -1,9 +1,11 @@
 const express = require("express");
 const helmet = require("helmet");
+const path = require("path");
 
 const app = express();
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // Minimal in-memory data (demo only)
 const state = {
@@ -29,27 +31,14 @@ function getAttempt(studentId, examId) {
   return state.attempts.find((a) => a.studentId === studentId && a.examId === examId);
 }
 
-app.get("/", (req, res) => {
-  res.type("html").send(`
-    <!doctype html>
-    <html>
-      <head><meta charset="utf-8"><title>SVV Online Exam Prototype</title></head>
-      <body>
-        <h1>SVV Online Examination Prototype</h1>
-        <p>This is a minimal target for OWASP ZAP scanning.</p>
-        <ul>
-          <li>GET /health</li>
-          <li>GET /api/exams</li>
-          <li>POST /api/exams/:examId/start</li>
-          <li>POST /api/exams/:examId/answer</li>
-          <li>POST /api/exams/:examId/submit</li>
-        </ul>
-      </body>
-    </html>
-  `);
-});
-
 app.get("/health", (req, res) => res.json({ ok: true }));
+
+// Expose questions for a specific exam
+app.get("/api/exams/:examId/questions", (req, res) => {
+  const exam = getExam(req.params.examId);
+  if (!exam) return res.status(404).json({ error: "exam not found" });
+  res.json(exam.questions);
+});
 
 app.get("/api/exams", (req, res) => {
   res.json(

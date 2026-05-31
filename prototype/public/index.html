@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVV Online Examination System</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- LOGIN PAGE -->
+  <div id="page-login" class="page active">
+    <div class="login-card">
+      <div class="logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#4f46e5"/>
+          <path d="M14 34V18l10-6 10 6v16" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="20" y="24" width="8" height="10" rx="1" fill="#fff"/>
+          <circle cx="24" cy="16" r="3" fill="#a5b4fc"/>
+        </svg>
+      </div>
+      <h1>Online Examination System</h1>
+      <p class="subtitle">SVV Lab — Semester Project</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="student-id">Student ID</label>
+          <input id="student-id" type="text" placeholder="e.g. STU-001" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required />
+        </div>
+        <div id="login-error" class="error-msg hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+      <p class="hint">Demo: any Student ID + any password</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="page-dashboard" class="page">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#4f46e5"/>
+          <path d="M14 34V18l10-6 10 6v16" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="20" y="24" width="8" height="10" rx="1" fill="#fff"/>
+          <circle cx="24" cy="16" r="3" fill="#a5b4fc"/>
+        </svg>
+        <span>ExamPortal</span>
+      </div>
+      <div class="topbar-right">
+        <span id="topbar-student"></span>
+        <button class="btn btn-ghost" id="logout-btn">Logout</button>
+      </div>
+    </header>
+    <main class="dashboard-main">
+      <h2>Available Exams</h2>
+      <p class="muted">Select an exam below to begin.</p>
+      <div id="exam-list" class="exam-grid"></div>
+    </main>
+  </div>
+
+  <!-- EXAM PAGE -->
+  <div id="page-exam" class="page">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#4f46e5"/>
+          <path d="M14 34V18l10-6 10 6v16" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="20" y="24" width="8" height="10" rx="1" fill="#fff"/>
+          <circle cx="24" cy="16" r="3" fill="#a5b4fc"/>
+        </svg>
+        <span id="exam-title">Exam</span>
+      </div>
+      <div class="topbar-right">
+        <div class="timer-box">
+          <span class="timer-icon">⏱</span>
+          <span id="exam-timer">--:--</span>
+        </div>
+      </div>
+    </header>
+    <main class="exam-main">
+      <div class="exam-layout">
+        <div class="questions-panel" id="questions-panel"></div>
+        <aside class="exam-sidebar">
+          <div class="sidebar-card">
+            <h3>Question Navigator</h3>
+            <div id="question-nav" class="q-nav"></div>
+          </div>
+          <div class="sidebar-card">
+            <h3>Progress</h3>
+            <div class="progress-bar-wrap">
+              <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="progress-text" class="progress-text">0 / 0 answered</p>
+          </div>
+          <button id="submit-exam-btn" class="btn btn-danger btn-full">Submit Exam</button>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- RESULT PAGE -->
+  <div id="page-result" class="page">
+    <div class="result-card">
+      <div class="result-icon">✅</div>
+      <h2>Exam Submitted</h2>
+      <p id="result-summary" class="result-summary"></p>
+      <button class="btn btn-primary" id="back-dashboard-btn">Back to Dashboard</button>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
