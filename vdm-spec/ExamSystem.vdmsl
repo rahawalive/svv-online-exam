@@ -1,0 +1,69 @@
+types
+  Student = token;
+  Exam = token;
+  Question = token;
+  Answer = token;
+  Time = nat;
+
+  Status = <Draft> | <Published>;
+  AStatus = <None> | <InProgress> | <Submitted>;
+
+state ExamSystem of
+  examStatus : map Exam to Status
+  deadline   : map Exam to Time
+  now        : Time
+  questions  : map Exam to set of Question
+
+  astatus    : map (Student * Exam) to AStatus
+  answers    : map (Student * Exam * Question) to Answer
+inv mk_ExamSystem(examStatus, deadline, now, questions, astatus, answers) ==
+  -- INV-1: uniqueness of attempt-state per (student, exam) is ensured by map type
+  (forall st:Student, e:Exam &
+      mk_(st,e) in set dom astatus)
+  and
+  -- INV-2: answers exist only for started attempts
+  (forall st:Student, e:Exam, q:Question &
+      mk_(st,e,q) in set dom answers =>
+        (astatus(mk_(st,e)) = <InProgress> or astatus(mk_(st,e)) = <Submitted>));
+
+init s ==
+  s = mk_ExamSystem({|->}, {|->}, 0, {|->}, {|->}, {|->});
+
+operations
+
+  PublishExam: Exam ==> ()
+  PublishExam(e) ==
+    examStatus := examStatus ++ { e |-> <Published> }
+  pre e in set dom examStatus and examStatus(e) = <Draft>
+  post examStatus(e) = <Published>
+   and astatus = astatus~ and answers = answers~;
+
+
+  StartExam: Student * Exam ==> ()
+  StartExam(st, e) ==
+    astatus := astatus ++ { mk_(st,e) |-> <InProgress> }
+  pre e in set dom examStatus and examStatus(e) = <Published>
+   and mk_(st,e) in set dom astatus and astatus(mk_(st,e)) = <None>
+  post astatus(mk_(st,e)) = <InProgress>
+   and examStatus = examStatus~ and answers = answers~;
+
+
+  SaveAnswer: Student * Exam * Question * Answer ==> ()
+  SaveAnswer(st, e, q, a) ==
+    answers := answers ++ { mk_(st,e,q) |-> a }
+  pre mk_(st,e) in set dom astatus and astatus(mk_(st,e)) = <InProgress>
+   and e in set dom questions and q in set questions(e)
+  post answers(mk_(st,e,q)) = a
+   and astatus = astatus~ and examStatus = examStatus~;
+
+
+  SubmitExam: Student * Exam ==> ()
+  SubmitExam(st, e) ==
+    astatus := astatus ++ { mk_(st,e) |-> <Submitted> }
+  pre mk_(st,e) in set dom astatus and astatus(mk_(st,e)) = <InProgress>
+   and e in set dom deadline and now <= deadline(e)
+  post astatus(mk_(st,e)) = <Submitted>
+   and answers = answers~ and examStatus = examStatus~;
+
+end ExamSystem
+

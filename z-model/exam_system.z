@@ -1,0 +1,90 @@
+[STUDENT, EXAM, QUESTION, ANSWER, TIME]
+
+STATUS ::= Draft | Published
+ASTATUS ::= None | InProgress | Submitted
+
+ExamSystem
+  examStatus : EXAM \fun STATUS
+  deadline   : EXAM \fun TIME
+  now        : TIME
+  questions  : EXAM \fun \power QUESTION
+
+  astatus    : (STUDENT \cross EXAM) \fun ASTATUS
+  answers    : (STUDENT \cross EXAM \cross QUESTION) \pfun ANSWER
+where
+  -- INV-2: Answers exist only for started (InProgress/Submitted) attempts
+  \forall s:STUDENT; e:EXAM; q:QUESTION @
+    ((s,e,q) \in dom answers) \implies
+      (astatus(s,e) = InProgress \lor astatus(s,e) = Submitted)
+
+
+InitExamSystem
+  ExamSystem'
+where
+  (\forall e:EXAM @ examStatus'(e) = Draft)
+  (\forall s:STUDENT; e:EXAM @ astatus'(s,e) = None)
+  answers' = \emptyset
+  deadline' = deadline
+  now' = now
+  questions' = questions
+
+
+PublishExam
+  \Delta ExamSystem
+  e?: EXAM
+where
+  examStatus(e?) = Draft
+  examStatus' = examStatus \oplus { e? \mapsto Published }
+  deadline'   = deadline
+  now'        = now
+  questions'  = questions
+  astatus'    = astatus
+  answers'    = answers
+
+
+StartExam
+  \Delta ExamSystem
+  s?: STUDENT
+  e?: EXAM
+where
+  examStatus(e?) = Published
+  astatus(s?, e?) = None
+  astatus' = astatus \oplus { (s?,e?) \mapsto InProgress }
+  examStatus' = examStatus
+  deadline'   = deadline
+  now'        = now
+  questions'  = questions
+  answers'    = answers
+
+
+SaveAnswer
+  \Delta ExamSystem
+  s?: STUDENT
+  e?: EXAM
+  q?: QUESTION
+  a?: ANSWER
+where
+  astatus(s?, e?) = InProgress
+  q? \in questions(e?)
+  answers' = answers \oplus { (s?,e?,q?) \mapsto a? }
+  examStatus' = examStatus
+  deadline'   = deadline
+  now'        = now
+  questions'  = questions
+  astatus'    = astatus
+
+
+SubmitExam
+  \Delta ExamSystem
+  s?: STUDENT
+  e?: EXAM
+where
+  astatus(s?, e?) = InProgress
+  now \le deadline(e?)
+  astatus' = astatus \oplus { (s?,e?) \mapsto Submitted }
+  examStatus' = examStatus
+  deadline'   = deadline
+  now'        = now
+  questions'  = questions
+  answers'    = answers
+

@@ -1,0 +1,36 @@
+name: svv-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  repo-structure-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required directories exist
+        run: |
+          test -d requirements
+          test -d z-model
+          test -d vdm-spec
+          test -d alloy-model
+          test -d validation
+          test -d ci-pipeline
+          test -d prototype
+          test -d report
+
+      - name: Verify key deliverables exist
+        run: |
+          test -f requirements/SRS.md
+          test -f requirements/defect-taxonomy.md
+          test -f z-model/exam_system.z
+          test -f vdm-spec/ExamSystem.vdmsl
+          test -f alloy-model/exam_system_counterexample.als
+          test -f alloy-model/exam_system_fixed.als
+          test -f alloy-model/counterexample-report.md
+          test -f validation/validation-checklist.md
+          test -f validation/security-zap-report.md
+          test -f report/final-report.md
+
