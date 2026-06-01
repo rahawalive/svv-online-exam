@@ -76,9 +76,10 @@ function renderExamCards(exams) {
     return `
       <div class="exam-card">
         <div class="exam-card-header">
-          <span class="exam-card-title">${exam.id}</span>
+          <span class="exam-card-title">${exam.title || exam.id}</span>
           ${statusBadge}
         </div>
+        <div class="exam-card-sub">${exam.id}${exam.subject ? ' &nbsp;·&nbsp; ' + exam.subject : ''}</div>
         <div class="exam-meta">
           <span>📋 ${exam.questionCount} question${exam.questionCount !== 1 ? "s" : ""}</span>
           <span>⏰ Deadline: ${deadline}</span>
@@ -149,7 +150,7 @@ async function fetchQuestions(examId) {
 
 /* ── Render Exam ── */
 function renderExamPage() {
-  document.getElementById("exam-title").textContent = app.currentExam.id;
+  document.getElementById("exam-title").textContent = app.currentExam.title || app.currentExam.id;
 
   const panel = document.getElementById("questions-panel");
   const nav = document.getElementById("question-nav");
@@ -271,7 +272,7 @@ async function submitExam(auto) {
     const total = app.questions.length;
 
     document.getElementById("result-summary").innerHTML =
-      `Exam <strong>${app.currentExam.id}</strong> submitted successfully.<br>` +
+      `Exam <strong>${app.currentExam.title || app.currentExam.id}</strong> submitted successfully.<br>` +
       `Student: <strong>${app.studentId}</strong><br>` +
       `Answered: <strong>${answered} / ${total}</strong> questions.` +
       (auto ? "<br><em>Submitted automatically — time expired.</em>" : "");

@@ -149,6 +149,8 @@ body {
 .badge-submitted { background: #dbeafe; color: #1d4ed8; }
 .badge-closed { background: #f1f5f9; color: var(--muted); }
 
+.exam-card-sub { font-size: 0.78rem; color: var(--muted); margin-top: -0.25rem; }
+
 .exam-meta { font-size: 0.82rem; color: var(--muted); display: flex; flex-direction: column; gap: 0.3rem; }
 .exam-meta span { display: flex; align-items: center; gap: 0.4rem; }
 
